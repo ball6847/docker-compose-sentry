@@ -5,8 +5,7 @@ set -e
 function start_sentry {
     echo "Waiting for postgresql service"
 
-    # wait for mysql service
-    # while [ "$(nc -v -z -w 3 $SENTRY_POSTGRES_HOST 5432 2> /dev/null; echo $?)" == "1" ];
+    # wait for postgres container
     while [ "$(sentry config get system.admin-email 2>&1 | grep "Connection refused" > /dev/null; echo $?)" == "0" ];
     do
         echo "Retry in 2 seconds."
@@ -14,9 +13,6 @@ function start_sentry {
     done
 
     # test if sentry already installed
-    # sentry config get system.admin-email
-    # not installed
-    # "$(sentry config get system.admin-email 2>&1 | grep "Connection refused" > /dev/null; echo $?)" == "0"
     if [ "$(sentry config get system.admin-email 2>&1 | grep "Unable to fetch internal project" > /dev/null; echo $?)" == "0" ]; then
         sentry upgrade --noinput
         sentry createuser --email "$SENTRY_EMAIL" --password "$SENTRY_PASSWORD" --superuser --no-input
