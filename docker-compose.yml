@@ -1,0 +1,35 @@
+sentry:
+    image: sentry:8
+    container_name: sentry
+    links:
+        - redis:redis
+        - postgres:postgres
+    ports:
+        - 9000:9000
+    volumes:
+        - ./docker/entrypoint/sentry.sh:/docker-entrypoint.sh
+        - ./docker/data/sentry:/var/lib/sentry/files
+    environment:
+        - SENTRY_SECRET_KEY=yourprojectssentrysecretkey987654321
+        - SENTRY_POSTGRES_HOST=postgres
+        - SENTRY_POSTGRES_PORT=5432
+        - SENTRY_DB_NAME=sentry
+        - SENTRY_DB_USER=sentry
+        - SENTRY_DB_PASSWORD=password
+        - SENTRY_EMAIL=you@company.com
+        - SENTRY_PASSWORD=123456 # important! change this later in admin ui
+    # entrypoint: sh -c "while true; do sleep 2; done;"
+redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+        - ./docker/data/redis:/data
+postgres:
+    image: sameersbn/postgresql:9.4-13
+    container_name: postgres
+    environment:
+        - DB_USER=sentry
+        - DB_PASS=password
+        - DB_NAME=sentry
+    volumes:
+        - ./docker/data/postgres:/var/lib/postgresql

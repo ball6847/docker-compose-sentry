@@ -1,0 +1,4 @@
+/docker/data/postgres/*
+/docker/data/redis/*
+/docker/data/sentry/*
+!.gitkeep
